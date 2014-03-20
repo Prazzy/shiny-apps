@@ -1,6 +1,6 @@
 require(rCharts)
 shinyServer(function(input, output) {
-  output$myChart <- renderChart({
+  output$myChart <- renderChart2({
     names(iris) = gsub("\\.", "", names(iris))
     p1 <- rPlot(input$x, input$y, data = iris, color = "Species", 
                 facet = "Species", type = 'point')
