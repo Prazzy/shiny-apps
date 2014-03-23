@@ -3,7 +3,7 @@ require(rCharts)
 shinyUI(pageWithSidebar(
   headerPanel("rCharts: Highcharts"),
   sidebarPanel(
-    selectInput(inputId = "x",
+    selectInput(inputId = "val",
                 label = "Choose X",
                 choices = c(1, 2),
                 selected = "2",

@@ -22,17 +22,31 @@ shinyServer(function(input, output) {
     hist(x, breaks = bins, col = 'darkgray', border = 'white')
   })
   
-  output$myChart1 <- renderChart2({
-    h1 <- Highcharts$new()
-    h1$chart(type = "column")
-    h1$series(data = c(input$bins, 3, 4), name="Browser Share")
-    h1$legend(symbolWidth = 80)
-    #h1$set(dom = "myChart")
-    return(h1)
+  drv = dbDriver('MySQL')
+  # Bar chart
+  myval <- reactive({ input$val })
+  shiny:::flushReact()
+  observe({
+      query <- "select * from polls_choice where poll_id=%s"
+      query <- sprintf(query, myval())
+      print(query)
+      con = dbConnect(drv, dbname='mydb',user='dbuser',pass='dbuser')
+      res = dbGetQuery(con, statement=query)
+      v1 <- c(res['votes'])
+      print(v1)
+      dbDisconnect(con)
+    
+      output$myChart1 <- renderChart2({
+        h1 <- Highcharts$new()
+        h1$chart(type = "column")
+        h1$series(data = c(res['votes'])$votes, name="Browser Share1")
+        h1$legend(symbolWidth = 80)
+        h1$plotOptions(column = list(cursor = 'pointer', point = list(events = '')))
+        return(h1)
+    })  
   })
   
-  #print(input$inputID)
-  drv = dbDriver('MySQL')
+  # Pie chart
   con = dbConnect(drv, dbname='mydb',user='dbuser',pass='dbuser')
   res = dbGetQuery(con, statement="select * from polls_choice")
   choice <- c(res['choice_text'])
